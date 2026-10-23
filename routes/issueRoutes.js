@@ -5,17 +5,22 @@ const {
   getIssues,
   getIssueById,
   returnBook,
+  getMyIssues,
 } = require('../controllers/issueController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
+// User personal issued books route
+router.get('/my', protect, getMyIssues);
+
+// Admin circulation routes
 router.route('/')
-  .get(protect, getIssues)
-  .post(protect, createIssue);
+  .get(protect, authorize('admin'), getIssues)
+  .post(protect, authorize('admin'), createIssue);
 
 router.route('/:id')
-  .get(protect, getIssueById);
+  .get(protect, authorize('admin'), getIssueById);
 
 router.route('/:id/return')
-  .put(protect, returnBook);
+  .put(protect, authorize('admin'), returnBook);
 
 module.exports = router;

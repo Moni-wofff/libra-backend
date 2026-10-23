@@ -23,8 +23,17 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin'],
-      default: 'admin',
+      enum: ['admin', 'user'],
+      default: 'user',
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Student',
+      default: null,
     },
   },
   {

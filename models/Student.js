@@ -27,6 +27,11 @@ const studentSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
   },
   {
     timestamps: true,

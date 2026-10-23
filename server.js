@@ -16,6 +16,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://libra-frontend-ebon.vercel.app',
+  ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
 ];
 
 app.use(
@@ -42,6 +43,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/books', require('./routes/bookRoutes'));
 app.use('/api/students', require('./routes/studentRoutes'));
 app.use('/api/issues', require('./routes/issueRoutes'));
+app.use('/api/borrow-requests', require('./routes/borrowRequestRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 // Error Middleware

@@ -229,9 +229,59 @@ const returnBook = async (req, res, next) => {
   }
 };
 
+// @desc    Get logged-in user's own issued books
+// @route   GET /api/issues/my
+// @access  Private
+const getMyIssues = async (req, res, next) => {
+  try {
+    let studentId = req.user.student;
+    if (!studentId) {
+      const student = await Student.findOne({ email: req.user.email });
+      if (student) {
+        studentId = student._id;
+      }
+    }
+
+    if (!studentId) {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        data: [],
+      });
+    }
+
+    const { status } = req.query;
+    let query = { student: studentId };
+    const now = new Date();
+
+    if (status === 'issued') {
+      query.status = 'issued';
+    } else if (status === 'returned') {
+      query.status = 'returned';
+    } else if (status === 'overdue') {
+      query.status = 'issued';
+      query.dueDate = { $lt: now };
+    }
+
+    const issues = await Issue.find(query)
+      .populate('book', 'title author isbn category quantity available')
+      .populate('student', 'name email phone membershipId')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: issues.length,
+      data: issues,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createIssue,
   getIssues,
   getIssueById,
   returnBook,
+  getMyIssues,
 };
